@@ -15,5 +15,4 @@ public class PostMedia {
         public String getPostId() {
             return postId;
         }
-
 }

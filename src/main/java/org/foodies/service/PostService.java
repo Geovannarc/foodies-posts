@@ -54,18 +54,17 @@ public class PostService {
     }
 
     private CompletableFuture<String> uploadImageAsync(MultipartFile file) throws IOException {
-        String fileKey = "images/" + file.getName() + "_" + System.currentTimeMillis();
+        String fileKey = file.getOriginalFilename() + "_" + System.currentTimeMillis();
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
                 .key(fileKey)
                 .build();
 
-        return s3Client.putObject(putObjectRequest, AsyncRequestBody.fromFile(file.getResource().getFile()))
+        return s3Client.putObject(putObjectRequest, AsyncRequestBody.fromBytes(file.getResource().getInputStream().readAllBytes()))
                 .thenApply(response -> s3Client.utilities().getUrl(builder -> builder.bucket(bucketName)
                         .key(fileKey)).toString())
                 .exceptionally(ex -> {
-                    System.err.println("Falha no upload: " + ex.getMessage());
-                    return null;
+                    throw new RuntimeException("Falha ao fazer upload da imagem: " + ex.getMessage());
                 });
     }
 
@@ -90,8 +89,7 @@ public class PostService {
         return dynamoClient.putItem(putItemRequest)
                 .thenRun(() -> System.out.println("Post salvo com sucesso no DynamoDB"))
                 .exceptionally(ex -> {
-                    System.err.println("Falha ao salvar o post: " + ex.getMessage());
-                    return null;
+                    throw new RuntimeException("Falha ao salvar post no DynamoDB: " + ex.getMessage());
                 });
     }
 

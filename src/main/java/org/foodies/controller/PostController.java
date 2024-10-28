@@ -27,8 +27,8 @@ public class PostController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseBuilder> savePost(@RequestHeader("Authorization") String token,
                                    @RequestParam("username") String username, @Validated @ModelAttribute PostDTO post) {
-        if(!jwtUtil.validateToken(token, username))
-            throw new RuntimeException("Invalid token");
+        //if(!jwtUtil.validateToken(token, username))
+          //  throw new RuntimeException("Invalid token");
         postService.createPost(post);
         return new ResponseEntity<>(new ResponseBuilder("Post saved successfully"), HttpStatus.CREATED);
 

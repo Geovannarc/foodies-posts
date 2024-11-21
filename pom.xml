@@ -100,7 +100,7 @@
                     <archive>
                         <manifest>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                            <mainClass>org.example.Main</mainClass>
+                            <mainClass>org.foodies.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

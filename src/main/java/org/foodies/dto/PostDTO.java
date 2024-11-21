@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.annotations.NotNull;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -17,14 +18,18 @@ import java.util.List;
 @Setter
 public class PostDTO {
 
+    @NotNull
     private Long userId;
     private String username;
+    @NotNull
     private Long restaurantId;
     private String caption;
+    @NotNull
     private int rating;
     private List<String> tags;
-    private List<MultipartFile> files;
-    private List<String> mediaFiles;
+    @NotNull
+    private MultipartFile mediaFile;
+    private String fileURL;
     private Long likes;
     private Date dateCreation;
 

@@ -1,5 +1,7 @@
 aws:
   region: us-east-1
+  sqs:
+    queue-url: https://sqs.us-east-2.amazonaws.com/147997130383/sqs-foodies-post
   dynamodb:
     region: us-east-1
     endpoint: https://dynamodb.us-east-1.amazonaws.com

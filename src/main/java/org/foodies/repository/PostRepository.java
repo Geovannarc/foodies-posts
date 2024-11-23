@@ -2,6 +2,7 @@ package org.foodies.repository;
 
 import org.foodies.dto.PostDTO;
 import org.foodies.model.Post;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 @Repository
 public class PostRepository {
 
+    @Autowired
     private DynamoDbClient dynamoDbClient;
 
     public void save(PostDTO post) {

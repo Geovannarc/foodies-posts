@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.annotations.NotNull;
 
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 
@@ -32,6 +33,6 @@ public class PostDTO {
 
     @SneakyThrows
     public String getDateCreation() {
-        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(dateCreation);
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date.from(Instant.now()));
     }
 }

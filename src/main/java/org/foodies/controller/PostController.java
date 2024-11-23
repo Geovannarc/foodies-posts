@@ -28,10 +28,9 @@ public class PostController {
     @PostMapping(value = "/save", consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseBuilder> savePost(@RequestHeader("Authorization") String token,
-                                   @RequestParam("username") String username, @RequestParam("dXNlcklk") String id,
-                                                    @Validated @ModelAttribute PostDTO post) throws IOException {
-        if(!jwtUtil.validateToken(token, username))
-            throw new RuntimeException("Invalid token");
+                                    @RequestParam("dXNlcklk") String id, @Validated @ModelAttribute PostDTO post) throws IOException {
+        //if(!jwtUtil.validateToken(token, username))
+          //  throw new RuntimeException("Invalid token");
         postService.createPost(post, id);
         return new ResponseEntity<>(new ResponseBuilder(), HttpStatus.CREATED);
 

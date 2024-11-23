@@ -11,10 +11,8 @@ import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.Base64;
 import java.util.List;
 
@@ -29,6 +27,7 @@ public class PostService {
 
     private final String bucketName = "foodies-post-bucket";
 
+    @Autowired
     private PostRepository postRepository;
 
     public void createPost(PostDTO post, String id) throws IOException {

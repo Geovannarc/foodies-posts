@@ -7,8 +7,6 @@ import lombok.SneakyThrows;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.annotations.NotNull;
 
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -18,7 +16,6 @@ import java.util.List;
 @Setter
 public class PostDTO {
 
-    @NotNull
     private Long userId;
     private String username;
     @NotNull

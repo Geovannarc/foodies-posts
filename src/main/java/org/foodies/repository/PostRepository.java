@@ -33,7 +33,7 @@ public class PostRepository {
         itemValues.put("date_creation", AttributeValue.builder().s(post.getDateCreation()).build());
         itemValues.put("tags", AttributeValue.builder().ss(post.getTags()).build());
         itemValues.put("media_file", AttributeValue.builder().s(post.getFileURL()).build());
-        itemValues.put("likes", AttributeValue.builder().n(String.valueOf(post.getLikes())).build());
+        itemValues.put("likes", AttributeValue.builder().n(String.valueOf(0)).build());
 
         PutItemRequest putItemRequest = PutItemRequest.builder()
                 .tableName("PostsTable")

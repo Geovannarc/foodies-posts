@@ -1,9 +1,6 @@
 package org.foodies.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.SneakyThrows;
+import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.annotations.NotNull;
 
@@ -15,8 +12,10 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
+@NoArgsConstructor
 public class PostDTO {
 
+    private String postId;
     private Long userId;
     private String username;
     @NotNull

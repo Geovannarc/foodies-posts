@@ -27,23 +27,16 @@ public class PostRepository {
 
     public void save(PostDTO post) {
         Map<String, AttributeValue> itemValues = new HashMap<>();
-        log.info("postId: " + post.getPostId());
         itemValues.put("post_id", AttributeValue.builder().s(post.getPostId()).build());
-        log.info("user_id: " + post.getUserId());
         itemValues.put("user_id", AttributeValue.builder().s(String.valueOf(post.getUserId())).build());
-        log.info("restaurant_id: " + post.getRestaurantId());
         itemValues.put("restaurant_id", AttributeValue.builder().s(String.valueOf(post.getRestaurantId())).build());
-        log.info("caption: " + post.getCaption());
         itemValues.put("caption", AttributeValue.builder().s(post.getCaption()).build());
-        log.info("rating: " + post.getRating());
         itemValues.put("rating", AttributeValue.builder().n(String.valueOf(post.getRating())).build());
-        log.info("date_creation: " + post.getDateCreation());
         itemValues.put("date_creation", AttributeValue.builder().s(post.getDateCreation()).build());
-        log.info("tags: " + post.getTags());
         itemValues.put("tags", AttributeValue.builder().ss(post.getTags()).build());
-        log.info("media_file: " + post.getFileURL());
         itemValues.put("media_file", AttributeValue.builder().s(post.getFileURL()).build());
         itemValues.put("likes", AttributeValue.builder().n(String.valueOf(0)).build());
+        itemValues.put("username", AttributeValue.builder().s(post.getUsername()).build());
         itemValues.put("sortKey", AttributeValue.builder().s(post.getSortKey()).build());
 
         PutItemRequest putItemRequest = PutItemRequest.builder()
@@ -64,6 +57,7 @@ public class PostRepository {
 
         QueryRequest queryRequest = QueryRequest.builder()
                 .tableName(tableName)
+                .indexName("UsernameIndex")
                 .keyConditionExpression("username = :username")
                 .expressionAttributeValues(Map.of(":username", AttributeValue.builder().s(username).build()))
                 .build();
@@ -79,6 +73,8 @@ public class PostRepository {
                     post.setMediaFile(item.get("media_file").s());
                     post.setCaption(item.get("caption").s());
                     post.setRating(Integer.parseInt(item.get("rating").n()));
+                    post.setLikes(Integer.parseInt(item.get("likes").n()));
+                    post.setTags(item.get("tags").ss());
                     return post;
                 })
                 .collect(Collectors.toList());
@@ -107,5 +103,31 @@ public class PostRepository {
                     return post;
                 })
                 .collect(Collectors.toList());
+    }
+
+    public PostDTO findPostById(Long id) {
+        String tableName = "PostsTable";
+
+        QueryRequest queryRequest = QueryRequest.builder()
+                .tableName(tableName)
+                .keyConditionExpression("post_id = :post_id")
+                .expressionAttributeValues(Map.of(":post_id", AttributeValue.builder().s(String.valueOf(id)).build()))
+                .build();
+
+        QueryResponse queryResponse = dynamoDbClient.query(queryRequest);
+
+        return queryResponse.items().stream()
+                .map(item -> {
+                    PostDTO post = new PostDTO();
+                    post.setUserId(Long.parseLong(item.get("user_id").s()));
+                    post.setPostId(item.get("post_id").s());
+                    post.setRestaurantId(Long.parseLong(item.get("restaurant_id").s()));
+                    post.setFileURL(item.get("media_file").s());
+                    post.setCaption(item.get("caption").s());
+                    post.setRating(Integer.parseInt(item.get("rating").n()));
+                    return post;
+                })
+                .findFirst()
+                .orElse(null);
     }
 }

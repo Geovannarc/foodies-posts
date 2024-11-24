@@ -52,13 +52,16 @@ public class PostService {
     }
 
     private String uploadImage(MultipartFile file) throws IOException {
-        String fileKey = file.getOriginalFilename() + "_" + System.currentTimeMillis();
+        String originalFileName = file.getOriginalFilename();
+        String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
+        String fileKey = "uploads/" + System.currentTimeMillis() + extension;
+
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
                 .key(fileKey)
                 .build();
-        s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
 
+        s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
         return s3Client.utilities().getUrl(builder -> builder.bucket(bucketName).key(fileKey)).toString();
     }
 
@@ -72,6 +75,10 @@ public class PostService {
 
     public List<Post> getFeedPosts(String username) {
         return postRepository.findFeedPosts(username);
+    }
+
+    public PostDTO getPostById(Long id) {
+        return postRepository.findPostById(id);
     }
 }
 

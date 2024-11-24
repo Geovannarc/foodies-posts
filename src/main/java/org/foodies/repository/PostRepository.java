@@ -1,5 +1,6 @@
 package org.foodies.repository;
 
+import lombok.extern.log4j.Log4j2;
 import org.foodies.dto.PostDTO;
 import org.foodies.model.Post;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 
 @DynamoDbBean
 @Repository
+@Log4j2
 public class PostRepository {
 
     @Autowired
@@ -25,15 +27,25 @@ public class PostRepository {
 
     public void save(PostDTO post) {
         Map<String, AttributeValue> itemValues = new HashMap<>();
-        itemValues.put("post_id", AttributeValue.builder().s(getPostId(post.getUserId())).build());
+        log.info("postId: " + post.getPostId());
+        itemValues.put("post_id", AttributeValue.builder().s(post.getPostId()).build());
+        log.info("user_id: " + post.getUserId());
         itemValues.put("user_id", AttributeValue.builder().s(String.valueOf(post.getUserId())).build());
+        log.info("restaurant_id: " + post.getRestaurantId());
         itemValues.put("restaurant_id", AttributeValue.builder().s(String.valueOf(post.getRestaurantId())).build());
+        log.info("caption: " + post.getCaption());
         itemValues.put("caption", AttributeValue.builder().s(post.getCaption()).build());
+        log.info("rating: " + post.getRating());
         itemValues.put("rating", AttributeValue.builder().n(String.valueOf(post.getRating())).build());
+        log.info("date_creation: " + post.getDateCreation());
         itemValues.put("date_creation", AttributeValue.builder().s(post.getDateCreation()).build());
+        log.info("tags: " + post.getTags());
         itemValues.put("tags", AttributeValue.builder().ss(post.getTags()).build());
+        log.info("media_file: " + post.getFileURL());
         itemValues.put("media_file", AttributeValue.builder().s(post.getFileURL()).build());
+        log.info("likes: " + post.getLikes());
         itemValues.put("likes", AttributeValue.builder().n(String.valueOf(0)).build());
+        itemValues.put("sortKey", AttributeValue.builder().s(post.getSortKey()).build());
 
         PutItemRequest putItemRequest = PutItemRequest.builder()
                 .tableName("PostsTable")
@@ -46,10 +58,6 @@ public class PostRepository {
         } catch (Exception ex) {
             throw new RuntimeException("Falha ao salvar post no DynamoDB: " + ex.getMessage());
         }
-    }
-
-    private String getPostId(Long userId) {
-        return userId + "_" + System.currentTimeMillis();
     }
 
     public List<Post> findPostsByUsername(String username) {

@@ -35,4 +35,12 @@ public class PostDTO {
     public String getDateCreation() {
         return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date.from(Instant.now()));
     }
+
+    public String getPostId() {
+        return this.userId + "_" + System.currentTimeMillis();
+    }
+
+    public String getSortKey() {
+        return this.dateCreation.toString();
+    }
 }

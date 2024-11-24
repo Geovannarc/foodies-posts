@@ -1,5 +1,6 @@
 package org.foodies.model;
 
+import lombok.Getter;
 import lombok.Setter;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
@@ -9,6 +10,7 @@ import java.util.List;
 
 @DynamoDbBean
 @Setter
+@Getter
 public class Post {
 
         private String postId;

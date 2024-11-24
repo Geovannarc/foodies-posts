@@ -43,7 +43,6 @@ public class PostRepository {
         itemValues.put("tags", AttributeValue.builder().ss(post.getTags()).build());
         log.info("media_file: " + post.getFileURL());
         itemValues.put("media_file", AttributeValue.builder().s(post.getFileURL()).build());
-        log.info("likes: " + post.getLikes());
         itemValues.put("likes", AttributeValue.builder().n(String.valueOf(0)).build());
         itemValues.put("sortKey", AttributeValue.builder().s(post.getSortKey()).build());
 

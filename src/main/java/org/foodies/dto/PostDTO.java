@@ -41,6 +41,6 @@ public class PostDTO {
     }
 
     public String getSortKey() {
-        return this.dateCreation.toString();
+        return this.userId + "_" + System.currentTimeMillis();
     }
 }

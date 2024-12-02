@@ -39,8 +39,8 @@ public class PostController {
     @GetMapping(value = "/getByUsername")
     public ResponseEntity<ResponseBuilder> getPostsByUsername(@RequestHeader("Authorization") String token,
                                    @RequestParam("username") String username) {
-        if(!jwtUtil.validateToken(token, username))
-            throw new RuntimeException("Invalid token");
+        //if(!jwtUtil.validateToken(token, username))
+          //  throw new RuntimeException("Invalid token");
         return new ResponseEntity<>(new ResponseBuilder(postService.getByUserName(username)), HttpStatus.OK);
     }
 

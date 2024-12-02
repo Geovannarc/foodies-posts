@@ -61,7 +61,7 @@ public class PostController {
         if(!jwtUtil.validateToken(token, username))
             throw new RuntimeException("Invalid token");
         Map<String, AttributeValue> startKey = null;
-        if(exclusiveStartKey != null) {
+        if(exclusiveStartKey != null && !exclusiveStartKey.equals("null")) {
             ObjectMapper objectMapper = new ObjectMapper();
             Map<String, String> stringMap = objectMapper.readValue(exclusiveStartKey, new TypeReference<>() {
             });

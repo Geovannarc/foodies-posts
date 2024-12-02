@@ -128,15 +128,14 @@ public class PostRepository {
     }
 
     private List<Post> findLastCreatedPosts() {
-        QueryRequest queryRequest = QueryRequest.builder()
+        ScanRequest scanRequest = ScanRequest.builder()
                 .tableName("PostsTable")
-                .scanIndexForward(false)
-                .limit(20)
+                .limit(15)
                 .build();
 
-        QueryResponse queryResponse = dynamoDbClient.query(queryRequest);
+        ScanResponse scanResponse = dynamoDbClient.scan(scanRequest);
 
-        return queryResponse.items().stream()
+        return scanResponse.items().stream()
                 .map(item -> {
                     Post post = new Post();
                     post.setUserId(item.get("user_id").s());

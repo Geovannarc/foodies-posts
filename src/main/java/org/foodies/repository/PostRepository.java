@@ -7,14 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
-import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
-import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
+import software.amazon.awssdk.services.dynamodb.model.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @DynamoDbBean
@@ -27,17 +22,18 @@ public class PostRepository {
 
     public void save(PostDTO post) {
         Map<String, AttributeValue> itemValues = new HashMap<>();
-        itemValues.put("post_id", AttributeValue.builder().s(post.getPostId()).build());
         itemValues.put("user_id", AttributeValue.builder().s(String.valueOf(post.getUserId())).build());
         itemValues.put("restaurant_id", AttributeValue.builder().s(String.valueOf(post.getRestaurantId())).build());
         itemValues.put("caption", AttributeValue.builder().s(post.getCaption()).build());
         itemValues.put("rating", AttributeValue.builder().n(String.valueOf(post.getRating())).build());
-        itemValues.put("date_creation", AttributeValue.builder().s(post.getDateCreation()).build());
+        itemValues.put("created_at", AttributeValue.builder().s(post.getDateCreation()).build());
         itemValues.put("tags", AttributeValue.builder().ss(post.getTags()).build());
         itemValues.put("media_file", AttributeValue.builder().s(post.getFileURL()).build());
         itemValues.put("likes", AttributeValue.builder().n(String.valueOf(0)).build());
         itemValues.put("username", AttributeValue.builder().s(post.getUsername()).build());
-        itemValues.put("sortKey", AttributeValue.builder().s(post.getSortKey()).build());
+        itemValues.put("sort_key", AttributeValue.builder().s(post.getSortKey()).build());
+        itemValues.put("post_id", AttributeValue.builder().s(post.getPostId()).build());
+        itemValues.put("restaurant_name", AttributeValue.builder().s(post.getRestaurantName()).build());
 
         PutItemRequest putItemRequest = PutItemRequest.builder()
                 .tableName("PostsTable")
@@ -80,29 +76,48 @@ public class PostRepository {
                 .collect(Collectors.toList());
     }
 
-    public List<Post> findFeedPosts(String username) {
-        String tableName = "FollowingTable";
-
+    public List<Post> findFeedPosts(Long id) {
         QueryRequest queryRequest = QueryRequest.builder()
-                .tableName(tableName)
-                .keyConditionExpression("username = :username")
-                .expressionAttributeValues(Map.of(":username", AttributeValue.builder().s(username).build()))
+                .tableName("FollowTable")
+                .keyConditionExpression("follower_id = :follower_id")
+                .expressionAttributeValues(Map.of(":follower_id", AttributeValue.builder().s(String.valueOf(id)).build()))
                 .build();
 
         QueryResponse queryResponse = dynamoDbClient.query(queryRequest);
 
-        return queryResponse.items().stream()
-                .map(item -> {
-                    Post post = new Post();
-                    post.setUserId(item.get("user_id").s());
-                    post.setPostId(item.get("post_id").s());
-                    post.setRestaurantId(item.get("restaurant_id").s());
-                    post.setMediaFile(item.get("media_file").s());
-                    post.setCaption(item.get("caption").s());
-                    post.setRating(Integer.parseInt(item.get("rating").n()));
-                    return post;
-                })
-                .collect(Collectors.toList());
+        List<String> followedIds = queryResponse.items().stream()
+                .map(item -> item.get("following_id").s())
+                .toList();
+        List<Post> allPosts = new ArrayList<>();
+        for (String userId : followedIds) {
+            QueryRequest request = QueryRequest.builder()
+                    .tableName("PostsTable")
+                    .keyConditionExpression("user_id = :user_id")
+                    .expressionAttributeValues(Map.of(":user_id", AttributeValue.builder().s(userId).build()))
+                    .scanIndexForward(false)
+                    .limit(5)
+                    .build();
+
+            QueryResponse response = dynamoDbClient.query(request);
+            response.items().forEach(item -> {
+                Post post = new Post();
+                post.setUserId(item.get("user_id").s());
+                post.setPostId(item.get("post_id").s());
+                post.setMediaFile(item.get("media_file").s());
+                post.setCaption(item.get("caption").s());
+                post.setDateCreation(item.get("created_at").s());
+                post.setRestaurantName(item.get("restaurant_name").s());
+                post.setRating(Integer.parseInt(item.get("rating").n()));
+                post.setLikes(Integer.parseInt(item.get("likes").n()));
+                post.setTags(item.get("tags").ss());
+                post.setRestaurantId(item.get("restaurant_id").s());
+                post.setSortKey(item.get("sort_key").s());
+                allPosts.add(post);
+            });
+        }
+
+        allPosts.sort(Comparator.comparing(Post::getSortKey).reversed());
+        return allPosts;
     }
 
     public PostDTO findPostById(Long id) {
@@ -110,8 +125,9 @@ public class PostRepository {
 
         QueryRequest queryRequest = QueryRequest.builder()
                 .tableName(tableName)
-                .keyConditionExpression("post_id = :post_id")
-                .expressionAttributeValues(Map.of(":post_id", AttributeValue.builder().s(String.valueOf(id)).build()))
+                .indexName("UserIdIndex")
+                .keyConditionExpression("userId = :userId")
+                .expressionAttributeValues(Map.of(":userId", AttributeValue.builder().s(String.valueOf(id)).build()))
                 .build();
 
         QueryResponse queryResponse = dynamoDbClient.query(queryRequest);

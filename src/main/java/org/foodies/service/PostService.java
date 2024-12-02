@@ -66,6 +66,8 @@ public class PostService {
     }
 
     private void savePost(PostDTO post) {
+        post.setSortKey();
+        post.setPostId();
         postRepository.save(post);
     }
 
@@ -73,8 +75,9 @@ public class PostService {
         return postRepository.findPostsByUsername(username);
     }
 
-    public List<Post> getFeedPosts(String username) {
-        return postRepository.findFeedPosts(username);
+    public List<Post> getFeedPosts(String userId) {
+        Long id = decodeId(userId);
+        return postRepository.findFeedPosts(id);
     }
 
     public PostDTO getPostById(Long id) {

@@ -79,7 +79,7 @@ public class PostRepository {
         return posts;
     }
 
-    public List<Post> findFeedPosts(Long id) {
+    public Map<String, Object> findFeedPosts(Long id, Map<String, AttributeValue> exclusiveStartKey) {
         QueryRequest queryRequest = QueryRequest.builder()
                 .tableName("FollowTable")
                 .keyConditionExpression("follower_id = :follower_id")
@@ -91,10 +91,12 @@ public class PostRepository {
         List<String> followedIds = queryResponse.items().stream()
                 .map(item -> item.get("following_id").s())
                 .toList();
+        Map<String, Object> postResponse;
         List<Post> allPosts;
         if (followedIds.isEmpty()) {
-            allPosts = findLastCreatedPosts();
+            postResponse = findLastCreatedPosts(exclusiveStartKey);
         } else {
+            postResponse = new HashMap<>();
             allPosts = new ArrayList<>();
             for (String userId : followedIds) {
                 QueryRequest request = QueryRequest.builder()
@@ -102,7 +104,8 @@ public class PostRepository {
                         .keyConditionExpression("user_id = :user_id")
                         .expressionAttributeValues(Map.of(":user_id", AttributeValue.builder().s(userId).build()))
                         .scanIndexForward(false)
-                        .limit(5)
+                        .limit(10)
+                        .exclusiveStartKey(exclusiveStartKey)
                         .build();
 
                 QueryResponse response = dynamoDbClient.query(request);
@@ -122,21 +125,34 @@ public class PostRepository {
                     post.setUsername(item.get("username").s());
                     allPosts.add(post);
                 });
+                Map<String, Object> serializableKey = null;
+                if (response.hasLastEvaluatedKey()) {
+                    serializableKey = response.lastEvaluatedKey().entrySet().stream()
+                            .collect(Collectors.toMap(
+                                    Map.Entry::getKey,
+                                    entry -> entry.getValue().s() != null ? entry.getValue().s() :
+                                            entry.getValue().n() != null ? entry.getValue().n() :
+                                                    entry.getValue().ss()
+                            ));
+                }
+                allPosts.sort(Comparator.comparing(Post::getSortKey).reversed());
+                postResponse.put("posts", allPosts);
+                postResponse.put("exclusiveStartKey", serializableKey);
             }
         }
-        allPosts.sort(Comparator.comparing(Post::getSortKey).reversed());
-        return allPosts;
+        return postResponse;
     }
 
-    private List<Post> findLastCreatedPosts() {
+    private Map<String, Object> findLastCreatedPosts(Map<String, AttributeValue> exclusiveStartKey) {
         ScanRequest scanRequest = ScanRequest.builder()
                 .tableName("PostsTable")
-                .limit(15)
+                .limit(10)
+                .exclusiveStartKey(exclusiveStartKey)
                 .build();
 
         ScanResponse scanResponse = dynamoDbClient.scan(scanRequest);
 
-        return scanResponse.items().stream()
+        List<Post> posts = scanResponse.items().stream()
                 .map(item -> {
                     Post post = new Post();
                     post.setUserId(item.get("user_id").s());
@@ -154,6 +170,21 @@ public class PostRepository {
                     return post;
                 })
                 .collect(Collectors.toList());
+        Map<String, Object> serializableKey = null;
+        if (scanResponse.hasLastEvaluatedKey()) {
+            serializableKey = scanResponse.lastEvaluatedKey().entrySet().stream()
+                    .collect(Collectors.toMap(
+                            Map.Entry::getKey,
+                            entry -> entry.getValue().s() != null ? entry.getValue().s() :
+                                    entry.getValue().n() != null ? entry.getValue().n() :
+                                            entry.getValue().ss()
+                    ));
+        }
+        Map<String, Object> postResponse = new HashMap<>();
+        posts.sort(Comparator.comparing(Post::getSortKey).reversed());
+        postResponse.put("posts", posts);
+        postResponse.put("exclusiveStartKey", serializableKey);
+        return postResponse;
     }
 
     public PostDTO findPostById(Long id) {

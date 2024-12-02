@@ -9,12 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class PostService {
@@ -75,9 +77,9 @@ public class PostService {
         return postRepository.findPostsByUsername(username);
     }
 
-    public List<Post> getFeedPosts(String userId) {
+    public Map<String, Object> getFeedPosts(String userId, Map<String, AttributeValue> exclusiveStartKey) {
         Long id = decodeId(userId);
-        return postRepository.findFeedPosts(id);
+        return postRepository.findFeedPosts(id, exclusiveStartKey);
     }
 
     public PostDTO getPostById(Long id) {

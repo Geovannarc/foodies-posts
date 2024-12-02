@@ -71,6 +71,7 @@ public class PostRepository {
                     post.setRating(Integer.parseInt(item.get("rating").n()));
                     post.setLikes(Integer.parseInt(item.get("likes").n()));
                     post.setTags(item.get("tags").ss());
+                    post.setSortKey(item.get("sort_key").s());
                     return post;
                 })
                 .toList());

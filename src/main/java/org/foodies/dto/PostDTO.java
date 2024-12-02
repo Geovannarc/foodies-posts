@@ -31,17 +31,18 @@ public class PostDTO {
     private String fileURL;
     private Long likes;
     private Date dateCreation;
+    private String sortKey;
 
     @SneakyThrows
     public String getDateCreation() {
         return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date.from(Instant.now()));
     }
 
-    public String getPostId() {
-        return this.userId + "_" + System.currentTimeMillis();
+    public void setPostId() {
+        this.postId = this.userId + "_" + this.getSortKey();
     }
 
-    public String getSortKey() {
-        return String.valueOf(System.currentTimeMillis());
+    public void setSortKey() {
+        this.sortKey = String.valueOf(System.currentTimeMillis());
     }
 }

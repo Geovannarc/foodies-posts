@@ -23,6 +23,7 @@ public class Post {
         private String dateCreation;
         private String restaurantName;
         private int likes;
+        private String sortKey;
 
         @DynamoDbPartitionKey
         public String getUserid() {
@@ -31,6 +32,6 @@ public class Post {
 
         @DynamoDbSortKey
         public String getSortKey() {
-                return dateCreation;
+                return sortKey;
         }
 }

@@ -66,6 +66,8 @@ public class PostService {
     }
 
     private void savePost(PostDTO post) {
+        post.setSortKey();
+        post.setPostId();
         postRepository.save(post);
     }
 

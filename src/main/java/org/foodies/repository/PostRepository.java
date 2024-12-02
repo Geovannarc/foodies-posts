@@ -22,7 +22,6 @@ public class PostRepository {
 
     public void save(PostDTO post) {
         Map<String, AttributeValue> itemValues = new HashMap<>();
-        itemValues.put("post_id", AttributeValue.builder().s(post.getPostId()).build());
         itemValues.put("user_id", AttributeValue.builder().s(String.valueOf(post.getUserId())).build());
         itemValues.put("restaurant_id", AttributeValue.builder().s(String.valueOf(post.getRestaurantId())).build());
         itemValues.put("caption", AttributeValue.builder().s(post.getCaption()).build());
@@ -32,6 +31,8 @@ public class PostRepository {
         itemValues.put("media_file", AttributeValue.builder().s(post.getFileURL()).build());
         itemValues.put("likes", AttributeValue.builder().n(String.valueOf(0)).build());
         itemValues.put("username", AttributeValue.builder().s(post.getUsername()).build());
+        itemValues.put("sort_key", AttributeValue.builder().s(post.getSortKey()).build());
+        itemValues.put("post_id", AttributeValue.builder().s(post.getPostId()).build());
         itemValues.put("restaurant_name", AttributeValue.builder().s(post.getRestaurantName()).build());
 
         PutItemRequest putItemRequest = PutItemRequest.builder()
@@ -110,11 +111,12 @@ public class PostRepository {
                 post.setLikes(Integer.parseInt(item.get("likes").n()));
                 post.setTags(item.get("tags").ss());
                 post.setRestaurantId(item.get("restaurant_id").s());
+                post.setSortKey(item.get("sort_key").s());
                 allPosts.add(post);
             });
         }
 
-        allPosts.sort(Comparator.comparing(Post::getDateCreation).reversed());
+        allPosts.sort(Comparator.comparing(Post::getSortKey).reversed());
         return allPosts;
     }
 

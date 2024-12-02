@@ -118,9 +118,38 @@ public class PostRepository {
                 allPosts.add(post);
             });
         }
-
+        if (allPosts.isEmpty())
+            allPosts = findLastCreatedPosts();
         allPosts.sort(Comparator.comparing(Post::getSortKey).reversed());
         return allPosts;
+    }
+
+    private List<Post> findLastCreatedPosts() {
+        QueryRequest queryRequest = QueryRequest.builder()
+                .tableName("PostsTable")
+                .scanIndexForward(false)
+                .limit(20)
+                .build();
+
+        QueryResponse queryResponse = dynamoDbClient.query(queryRequest);
+
+        return queryResponse.items().stream()
+                .map(item -> {
+                    Post post = new Post();
+                    post.setUserId(item.get("user_id").s());
+                    post.setPostId(item.get("post_id").s());
+                    post.setMediaFile(item.get("media_file").s());
+                    post.setCaption(item.get("caption").s());
+                    post.setDateCreation(item.get("created_at").s());
+                    post.setRestaurantName(item.get("restaurant_name").s());
+                    post.setRating(Integer.parseInt(item.get("rating").n()));
+                    post.setLikes(Integer.parseInt(item.get("likes").n()));
+                    post.setTags(item.get("tags").ss());
+                    post.setRestaurantId(item.get("restaurant_id").s());
+                    post.setSortKey(item.get("sort_key").s());
+                    return post;
+                })
+                .collect(Collectors.toList());
     }
 
     public PostDTO findPostById(Long id) {

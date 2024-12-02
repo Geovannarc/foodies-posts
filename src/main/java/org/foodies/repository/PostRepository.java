@@ -119,6 +119,7 @@ public class PostRepository {
                     post.setTags(item.get("tags").ss());
                     post.setRestaurantId(item.get("restaurant_id").s());
                     post.setSortKey(item.get("sort_key").s());
+                    post.setUsername(item.get("username").s());
                     allPosts.add(post);
                 });
             }
@@ -149,6 +150,7 @@ public class PostRepository {
                     post.setTags(item.get("tags").ss());
                     post.setRestaurantId(item.get("restaurant_id").s());
                     post.setSortKey(item.get("sort_key").s());
+                    post.setUsername(item.get("username").s());
                     return post;
                 })
                 .collect(Collectors.toList());

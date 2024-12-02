@@ -48,8 +48,8 @@ public class PostController {
     public ResponseEntity<ResponseBuilder> getPosts(@RequestHeader("Authorization") String token,
                                                     @RequestParam("username") String username,
                                                     @RequestParam("dXNlcklk") String id) {
-        //if(!jwtUtil.validateToken(token, username))
-          //  throw new RuntimeException("Invalid token");
+        if(!jwtUtil.validateToken(token, username))
+            throw new RuntimeException("Invalid token");
         return new ResponseEntity<>(new ResponseBuilder(postService.getFeedPosts(id)), HttpStatus.OK);
     }
 

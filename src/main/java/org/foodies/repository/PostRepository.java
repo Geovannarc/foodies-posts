@@ -91,35 +91,38 @@ public class PostRepository {
         List<String> followedIds = queryResponse.items().stream()
                 .map(item -> item.get("following_id").s())
                 .toList();
-        List<Post> allPosts = new ArrayList<>();
-        for (String userId : followedIds) {
-            QueryRequest request = QueryRequest.builder()
-                    .tableName("PostsTable")
-                    .keyConditionExpression("user_id = :user_id")
-                    .expressionAttributeValues(Map.of(":user_id", AttributeValue.builder().s(userId).build()))
-                    .scanIndexForward(false)
-                    .limit(5)
-                    .build();
-
-            QueryResponse response = dynamoDbClient.query(request);
-            response.items().forEach(item -> {
-                Post post = new Post();
-                post.setUserId(item.get("user_id").s());
-                post.setPostId(item.get("post_id").s());
-                post.setMediaFile(item.get("media_file").s());
-                post.setCaption(item.get("caption").s());
-                post.setDateCreation(item.get("created_at").s());
-                post.setRestaurantName(item.get("restaurant_name").s());
-                post.setRating(Integer.parseInt(item.get("rating").n()));
-                post.setLikes(Integer.parseInt(item.get("likes").n()));
-                post.setTags(item.get("tags").ss());
-                post.setRestaurantId(item.get("restaurant_id").s());
-                post.setSortKey(item.get("sort_key").s());
-                allPosts.add(post);
-            });
-        }
-        if (allPosts.isEmpty())
+        List<Post> allPosts;
+        if (followedIds.isEmpty()) {
             allPosts = findLastCreatedPosts();
+        } else {
+            allPosts = new ArrayList<>();
+            for (String userId : followedIds) {
+                QueryRequest request = QueryRequest.builder()
+                        .tableName("PostsTable")
+                        .keyConditionExpression("user_id = :user_id")
+                        .expressionAttributeValues(Map.of(":user_id", AttributeValue.builder().s(userId).build()))
+                        .scanIndexForward(false)
+                        .limit(5)
+                        .build();
+
+                QueryResponse response = dynamoDbClient.query(request);
+                response.items().forEach(item -> {
+                    Post post = new Post();
+                    post.setUserId(item.get("user_id").s());
+                    post.setPostId(item.get("post_id").s());
+                    post.setMediaFile(item.get("media_file").s());
+                    post.setCaption(item.get("caption").s());
+                    post.setDateCreation(item.get("created_at").s());
+                    post.setRestaurantName(item.get("restaurant_name").s());
+                    post.setRating(Integer.parseInt(item.get("rating").n()));
+                    post.setLikes(Integer.parseInt(item.get("likes").n()));
+                    post.setTags(item.get("tags").ss());
+                    post.setRestaurantId(item.get("restaurant_id").s());
+                    post.setSortKey(item.get("sort_key").s());
+                    allPosts.add(post);
+                });
+            }
+        }
         allPosts.sort(Comparator.comparing(Post::getSortKey).reversed());
         return allPosts;
     }

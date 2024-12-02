@@ -13,24 +13,24 @@ import java.util.List;
 @Getter
 public class Post {
 
-        private String postId;
-        private String sortKey;
         private String userId;
+        private String postId;
         private String mediaFile;
         private String restaurantId;
         private String caption;
         private int rating;
         private List<String> tags;
         private String dateCreation;
+        private String restaurantName;
         private int likes;
 
         @DynamoDbPartitionKey
-        public String getPostId() {
-                return postId;
+        public String getUserid() {
+                return userId;
         }
 
         @DynamoDbSortKey
         public String getSortKey() {
-                return sortKey;
+                return dateCreation;
         }
 }

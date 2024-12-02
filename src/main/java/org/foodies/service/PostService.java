@@ -73,8 +73,9 @@ public class PostService {
         return postRepository.findPostsByUsername(username);
     }
 
-    public List<Post> getFeedPosts(String username) {
-        return postRepository.findFeedPosts(username);
+    public List<Post> getFeedPosts(String userId) {
+        Long id = decodeId(userId);
+        return postRepository.findFeedPosts(id);
     }
 
     public PostDTO getPostById(Long id) {

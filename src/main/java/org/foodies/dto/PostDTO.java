@@ -20,6 +20,8 @@ public class PostDTO {
     private String username;
     @NotNull
     private Long restaurantId;
+    @NotNull
+    private String restaurantName;
     private String caption;
     @NotNull
     private int rating;
@@ -40,6 +42,6 @@ public class PostDTO {
     }
 
     public String getSortKey() {
-        return this.userId + "_" + System.currentTimeMillis();
+        return String.valueOf(System.currentTimeMillis());
     }
 }

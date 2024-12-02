@@ -16,6 +16,7 @@ public class Post {
         private String userId;
         private String postId;
         private String mediaFile;
+        private String username;
         private String restaurantId;
         private String caption;
         private int rating;

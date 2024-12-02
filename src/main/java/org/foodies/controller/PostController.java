@@ -29,8 +29,8 @@ public class PostController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseBuilder> savePost(@RequestHeader("Authorization") String token,
                                     @RequestParam("dXNlcklk") String id, @Validated @ModelAttribute PostDTO post) throws IOException {
-        //if(!jwtUtil.validateToken(token, post.getUsername()))
-          //  throw new RuntimeException("Invalid token");
+        if(!jwtUtil.validateToken(token, post.getUsername()))
+            throw new RuntimeException("Invalid token");
         postService.createPost(post, id);
         return new ResponseEntity<>(new ResponseBuilder(), HttpStatus.CREATED);
 
@@ -39,8 +39,8 @@ public class PostController {
     @GetMapping(value = "/getByUsername")
     public ResponseEntity<ResponseBuilder> getPostsByUsername(@RequestHeader("Authorization") String token,
                                    @RequestParam("username") String username) {
-        if(!jwtUtil.validateToken(token, username))
-            throw new RuntimeException("Invalid token");
+        //if(!jwtUtil.validateToken(token, username))
+          //  throw new RuntimeException("Invalid token");
         return new ResponseEntity<>(new ResponseBuilder(postService.getByUserName(username)), HttpStatus.OK);
     }
 
@@ -48,8 +48,8 @@ public class PostController {
     public ResponseEntity<ResponseBuilder> getPosts(@RequestHeader("Authorization") String token,
                                                     @RequestParam("username") String username,
                                                     @RequestParam("dXNlcklk") String id) {
-        //if(!jwtUtil.validateToken(token, username))
-          //  throw new RuntimeException("Invalid token");
+        if(!jwtUtil.validateToken(token, username))
+            throw new RuntimeException("Invalid token");
         return new ResponseEntity<>(new ResponseBuilder(postService.getFeedPosts(id)), HttpStatus.OK);
     }
 

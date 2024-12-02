@@ -60,7 +60,7 @@ public class PostRepository {
 
         QueryResponse queryResponse = dynamoDbClient.query(queryRequest);
 
-        return queryResponse.items().stream()
+        List<Post> posts = new ArrayList<>(queryResponse.items().stream()
                 .map(item -> {
                     Post post = new Post();
                     post.setUserId(item.get("user_id").s());
@@ -73,7 +73,9 @@ public class PostRepository {
                     post.setTags(item.get("tags").ss());
                     return post;
                 })
-                .collect(Collectors.toList());
+                .toList());
+        posts.sort(Comparator.comparing(Post::getSortKey).reversed());
+        return posts;
     }
 
     public List<Post> findFeedPosts(Long id) {

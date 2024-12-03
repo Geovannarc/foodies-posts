@@ -72,6 +72,9 @@ public class PostRepository {
                     post.setLikes(Integer.parseInt(item.get("likes").n()));
                     post.setTags(item.get("tags").ss());
                     post.setSortKey(item.get("sort_key").s());
+                    post.setRestaurantName(item.get("restaurant_name").s());
+                    post.setDateCreation(item.get("created_at").s());
+                    post.setUsername(item.get("username").s());
                     return post;
                 })
                 .toList());

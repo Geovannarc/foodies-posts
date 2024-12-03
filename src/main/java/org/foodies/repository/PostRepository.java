@@ -88,9 +88,9 @@ public class PostRepository {
 
         QueryResponse queryResponse = dynamoDbClient.query(queryRequest);
 
-        List<String> followedIds = queryResponse.items().stream()
+        List<String> followedIds = new ArrayList<>(queryResponse.items().stream()
                 .map(item -> item.get("following_id").s())
-                .toList();
+                .toList());
         Map<String, Object> postResponse;
         List<Post> allPosts;
         log.info("Followed IDs: {}", followedIds);
@@ -98,6 +98,7 @@ public class PostRepository {
             log.info("No posts to show");
             postResponse = findLastCreatedPosts(exclusiveStartKey);
         } else {
+            followedIds.add(String.valueOf(id));
             postResponse = new HashMap<>();
             allPosts = new ArrayList<>();
             for (String userId : followedIds) {

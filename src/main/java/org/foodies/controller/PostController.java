@@ -55,8 +55,8 @@ public class PostController {
                                                     @RequestParam("exclusiveStartKey")
                                                         @Nullable
                                                         String exclusiveStartKey) throws JsonProcessingException {
-        if(!jwtUtil.validateToken(token, username))
-            throw new RuntimeException("Invalid token");
+        //if(!jwtUtil.validateToken(token, username))
+          //  throw new RuntimeException("Invalid token");
         Map<String, AttributeValue> startKey = null;
         if(exclusiveStartKey != null && !exclusiveStartKey.equals("null")) {
             ObjectMapper objectMapper = new ObjectMapper();

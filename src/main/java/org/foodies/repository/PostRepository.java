@@ -93,7 +93,9 @@ public class PostRepository {
                 .toList();
         Map<String, Object> postResponse;
         List<Post> allPosts;
+        log.info("Followed IDs: {}", followedIds);
         if (followedIds.isEmpty()) {
+            log.info("No posts to show");
             postResponse = findLastCreatedPosts(exclusiveStartKey);
         } else {
             postResponse = new HashMap<>();
@@ -149,9 +151,9 @@ public class PostRepository {
                 .limit(10)
                 .exclusiveStartKey(exclusiveStartKey)
                 .build();
-
+        log.info("Scan request: {}", scanRequest);
         ScanResponse scanResponse = dynamoDbClient.scan(scanRequest);
-
+        log.info("Scan response: {}", scanResponse.count());
         List<Post> posts = scanResponse.items().stream()
                 .map(item -> {
                     Post post = new Post();

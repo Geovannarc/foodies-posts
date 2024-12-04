@@ -43,6 +43,6 @@ public class PostDTO {
     }
 
     public void setSortKey() {
-        this.sortKey = String.valueOf(System.currentTimeMillis());
+        this.sortKey = String.valueOf(-System.currentTimeMillis());
     }
 }

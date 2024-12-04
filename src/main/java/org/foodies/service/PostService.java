@@ -47,7 +47,7 @@ public class PostService {
 
     private void sendMessage(PostDTO post) {
         MessageDTO message = MessageDTO.builder()
-                .id(post.getUserId())
+                .id(post.getRestaurantId())
                 .rating(post.getRating())
                 .build();
         sendMessageService.sendMessage(message.toString());

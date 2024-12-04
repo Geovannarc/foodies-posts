@@ -60,7 +60,7 @@ public class PostRepository {
 
         QueryResponse queryResponse = dynamoDbClient.query(queryRequest);
 
-        List<Post> posts = new ArrayList<>(queryResponse.items().stream()
+        return new ArrayList<>(queryResponse.items().stream()
                 .map(item -> {
                     Post post = new Post();
                     post.setUserId(item.get("user_id").s());
@@ -78,8 +78,6 @@ public class PostRepository {
                     return post;
                 })
                 .toList());
-        posts.sort(Comparator.comparing(Post::getSortKey).reversed());
-        return posts;
     }
 
     public Map<String, Object> findFeedPosts(Long id, Map<String, AttributeValue> exclusiveStartKey) {
@@ -141,7 +139,6 @@ public class PostRepository {
                                                     entry.getValue().ss()
                             ));
                 }
-                allPosts.sort(Comparator.comparing(Post::getSortKey).reversed());
                 postResponse.put("posts", allPosts);
                 postResponse.put("exclusiveStartKey", serializableKey);
             }
@@ -187,7 +184,6 @@ public class PostRepository {
                     ));
         }
         Map<String, Object> postResponse = new HashMap<>();
-        posts.sort(Comparator.comparing(Post::getSortKey).reversed());
         postResponse.put("posts", posts);
         postResponse.put("exclusiveStartKey", serializableKey);
         return postResponse;

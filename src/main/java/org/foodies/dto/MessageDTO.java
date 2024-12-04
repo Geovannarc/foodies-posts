@@ -12,8 +12,8 @@ public class MessageDTO {
     @Override
     public String toString() {
         return "{" +
-                "\"id\":" + id +
-                ", \"rating\":" + rating +
+                "\"id\":" + "\""+ id + "\""+
+                ", \"rating\":" + "\"" + rating + "\""+
                 '}';
     }
 }

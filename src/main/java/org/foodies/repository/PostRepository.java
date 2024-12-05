@@ -72,7 +72,7 @@ public class PostRepository {
                     post.setRating(Integer.parseInt(item.get("rating").n()));
                     post.setLikes(Integer.parseInt(item.get("likes").n()));
                     post.setTags(item.get("tags").ss());
-                    post.setSortKey(item.get("sort_key").n());
+                    post.setSortKey(Long.valueOf(item.get("sort_key").n()));
                     post.setRestaurantName(item.get("restaurant_name").s());
                     post.setDateCreation(item.get("created_at").s());
                     post.setUsername(item.get("username").s());
@@ -126,7 +126,7 @@ public class PostRepository {
                     post.setLikes(Integer.parseInt(item.get("likes").n()));
                     post.setTags(item.get("tags").ss());
                     post.setRestaurantId(item.get("restaurant_id").s());
-                    post.setSortKey(item.get("sort_key").n());
+                    post.setSortKey(Long.valueOf(item.get("sort_key").n()));
                     post.setUsername(item.get("username").s());
                     allPosts.add(post);
                 });
@@ -182,7 +182,7 @@ public class PostRepository {
                     post.setLikes(Integer.parseInt(item.get("likes").n()));
                     post.setTags(item.get("tags").ss());
                     post.setRestaurantId(item.get("restaurant_id").s());
-                    post.setSortKey(item.get("sort_key").n());
+                    post.setSortKey(Long.valueOf(item.get("sort_key").n()));
                     post.setUsername(item.get("username").s());
                     return post;
                 })
@@ -266,7 +266,7 @@ public class PostRepository {
                     post.setRating(Integer.parseInt(item.get("rating").n()));
                     post.setLikes(Integer.parseInt(item.get("likes").n()));
                     post.setTags(item.get("tags").ss());
-                    post.setSortKey(item.get("sort_key").n());
+                    post.setSortKey(Long.valueOf(item.get("sort_key").n()));
                     post.setRestaurantName(item.get("restaurant_name").s());
                     post.setDateCreation(item.get("created_at").s());
                     post.setUsername(item.get("username").s());

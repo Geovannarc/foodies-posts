@@ -25,6 +25,7 @@ public class Post {
         private String restaurantName;
         private int likes;
         private String sortKey;
+        private boolean liked;
 
         @DynamoDbPartitionKey
         public String getUserid() {

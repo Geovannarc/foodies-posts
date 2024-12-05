@@ -129,6 +129,19 @@ public class PostRepository {
                     post.setUsername(item.get("username").s());
                     allPosts.add(post);
                 });
+                for (Post post : allPosts) {
+                    QueryRequest likesQueryRequest = QueryRequest.builder()
+                            .tableName("LikeTable")
+                            .keyConditionExpression("user_id = :user_id AND post_id = :post_id")
+                            .expressionAttributeValues(Map.of(
+                                    ":user_id", AttributeValue.builder().s(String.valueOf(id)).build(),
+                                    ":post_id", AttributeValue.builder().s(post.getPostId()).build()
+                            ))
+                            .build();
+
+                    QueryResponse likesQueryResponse = dynamoDbClient.query(likesQueryRequest);
+                    post.setLiked(!likesQueryResponse.items().isEmpty());
+                }
                 Map<String, Object> serializableKey = null;
                 if (response.hasLastEvaluatedKey()) {
                     serializableKey = response.lastEvaluatedKey().entrySet().stream()

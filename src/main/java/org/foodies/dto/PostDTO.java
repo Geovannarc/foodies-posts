@@ -31,7 +31,7 @@ public class PostDTO {
     private String fileURL;
     private Long likes;
     private Date dateCreation;
-    private String sortKey;
+    private Long sortKey;
 
     @SneakyThrows
     public String getDateCreation() {
@@ -43,6 +43,6 @@ public class PostDTO {
     }
 
     public void setSortKey() {
-        this.sortKey = String.valueOf(-System.currentTimeMillis());
+        this.sortKey = -System.currentTimeMillis();
     }
 }

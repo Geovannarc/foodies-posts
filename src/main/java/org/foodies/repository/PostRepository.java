@@ -154,6 +154,7 @@ public class PostRepository {
                                                     entry.getValue().ss()
                             ));
                 }
+                allPosts.sort(Comparator.comparing(Post::getSortKey));
                 postResponse.put("posts", allPosts);
                 postResponse.put("exclusiveStartKey", serializableKey);
             }
@@ -212,6 +213,7 @@ public class PostRepository {
                     ));
         }
         Map<String, Object> postResponse = new HashMap<>();
+        posts.sort(Comparator.comparing(Post::getSortKey));
         postResponse.put("posts", posts);
         postResponse.put("exclusiveStartKey", serializableKey);
         return postResponse;

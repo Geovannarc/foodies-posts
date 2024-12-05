@@ -108,7 +108,7 @@ public class PostRepository {
                         .tableName("PostsTable")
                         .keyConditionExpression("user_id = :user_id")
                         .expressionAttributeValues(Map.of(":user_id", AttributeValue.builder().s(userId).build()))
-                        .scanIndexForward(false)
+                        .scanIndexForward(true)
                         .limit(10)
                         .exclusiveStartKey(exclusiveStartKey)
                         .build();

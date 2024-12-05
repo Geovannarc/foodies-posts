@@ -46,15 +46,6 @@ public class PostRepository {
             throw new RuntimeException("Falha ao salvar post no DynamoDB: " + ex.getMessage());
         }
 
-        PutItemRequest establishmentPutItemRequest = PutItemRequest.builder()
-                .tableName("EstablishmentPostsTable")
-                .item(itemValues)
-                .build();
-        try {
-            dynamoDbClient.putItem(establishmentPutItemRequest);
-        } catch (Exception ex) {
-            throw new RuntimeException("Falha ao salvar post no DynamoDB: " + ex.getMessage());
-        }
     }
 
     public List<Post> findPostsByUsername(String username) {
@@ -223,5 +214,37 @@ public class PostRepository {
                 })
                 .findFirst()
                 .orElse(null);
+    }
+
+    public List<Post> findPostsByRestaurantId(String restaurantId) {
+        String tableName = "PostsTable";
+
+        QueryRequest queryRequest = QueryRequest.builder()
+                .tableName(tableName)
+                .indexName("RestaurantIdIndex")
+                .keyConditionExpression("restaurant_id = :restaurant_id")
+                .expressionAttributeValues(Map.of(":restaurant_id", AttributeValue.builder().s(String.valueOf(restaurantId)).build()))
+                .build();
+
+        QueryResponse queryResponse = dynamoDbClient.query(queryRequest);
+
+        return new ArrayList<>(queryResponse.items().stream()
+                .map(item -> {
+                    Post post = new Post();
+                    post.setUserId(item.get("user_id").s());
+                    post.setPostId(item.get("post_id").s());
+                    post.setRestaurantId(item.get("restaurant_id").s());
+                    post.setMediaFile(item.get("media_file").s());
+                    post.setCaption(item.get("caption").s());
+                    post.setRating(Integer.parseInt(item.get("rating").n()));
+                    post.setLikes(Integer.parseInt(item.get("likes").n()));
+                    post.setTags(item.get("tags").ss());
+                    post.setSortKey(item.get("sort_key").s());
+                    post.setRestaurantName(item.get("restaurant_name").s());
+                    post.setDateCreation(item.get("created_at").s());
+                    post.setUsername(item.get("username").s());
+                    return post;
+                })
+                .toList());
     }
 }

@@ -79,4 +79,9 @@ public class PostController {
             throw new RuntimeException("Invalid token");
         return new ResponseEntity<>(new ResponseBuilder(postService.getPostById(id)), HttpStatus.OK);
     }
+
+    @GetMapping("/getByRestaurantId")
+    public ResponseEntity<ResponseBuilder> getPostsByRestaurantId(@RequestParam("restaurantId") String restaurantId) {
+        return new ResponseEntity<>(new ResponseBuilder(postService.getByRestaurantId(restaurantId)), HttpStatus.OK);
+    }
 }

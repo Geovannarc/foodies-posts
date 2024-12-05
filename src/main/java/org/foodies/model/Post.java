@@ -24,7 +24,7 @@ public class Post {
         private String dateCreation;
         private String restaurantName;
         private int likes;
-        private String sortKey;
+        private Long sortKey;
         private boolean liked;
 
         @DynamoDbPartitionKey
@@ -33,7 +33,7 @@ public class Post {
         }
 
         @DynamoDbSortKey
-        public String getSortKey() {
+        public Long getSortKey() {
                 return sortKey;
         }
 }

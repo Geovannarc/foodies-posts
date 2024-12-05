@@ -39,7 +39,7 @@ public class PostDTO {
     }
 
     public void setPostId() {
-        this.postId = this.userId + "_" + this.getSortKey();
+        this.postId = this.userId + "_" + this.getSortKey().toString();
     }
 
     public void setSortKey() {

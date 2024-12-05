@@ -97,7 +97,7 @@ public class PostRepository {
         log.info("Followed IDs: {}", followedIds);
         if (followedIds.isEmpty()) {
             log.info("No posts to show");
-            postResponse = findLastCreatedPosts(exclusiveStartKey);
+            postResponse = findLastCreatedPosts(exclusiveStartKey, id);
         } else {
             followedIds.add(String.valueOf(id));
             postResponse = new HashMap<>();
@@ -159,7 +159,7 @@ public class PostRepository {
         return postResponse;
     }
 
-    private Map<String, Object> findLastCreatedPosts(Map<String, AttributeValue> exclusiveStartKey) {
+    private Map<String, Object> findLastCreatedPosts(Map<String, AttributeValue> exclusiveStartKey, Long id) {
         ScanRequest scanRequest = ScanRequest.builder()
                 .tableName("PostsTable")
                 .limit(10)
@@ -186,6 +186,19 @@ public class PostRepository {
                     return post;
                 })
                 .collect(Collectors.toList());
+        for (Post post : posts) {
+            QueryRequest likesQueryRequest = QueryRequest.builder()
+                    .tableName("LikeTable")
+                    .keyConditionExpression("user_id = :user_id AND post_id = :post_id")
+                    .expressionAttributeValues(Map.of(
+                            ":user_id", AttributeValue.builder().s(String.valueOf(id)).build(),
+                            ":post_id", AttributeValue.builder().s(post.getPostId()).build()
+                    ))
+                    .build();
+
+            QueryResponse likesQueryResponse = dynamoDbClient.query(likesQueryRequest);
+            post.setLiked(!likesQueryResponse.items().isEmpty());
+        }
         Map<String, Object> serializableKey = null;
         if (scanResponse.hasLastEvaluatedKey()) {
             serializableKey = scanResponse.lastEvaluatedKey().entrySet().stream()

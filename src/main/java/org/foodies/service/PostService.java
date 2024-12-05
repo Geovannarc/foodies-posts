@@ -85,5 +85,9 @@ public class PostService {
     public PostDTO getPostById(Long id) {
         return postRepository.findPostById(id);
     }
+
+    public Object getByRestaurantId(String restaurantId) {
+        return postRepository.findPostsByRestaurantId(restaurantId);
+    }
 }
 

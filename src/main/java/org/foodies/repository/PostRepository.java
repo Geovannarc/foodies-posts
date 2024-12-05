@@ -31,7 +31,7 @@ public class PostRepository {
         itemValues.put("media_file", AttributeValue.builder().s(post.getFileURL()).build());
         itemValues.put("likes", AttributeValue.builder().n(String.valueOf(0)).build());
         itemValues.put("username", AttributeValue.builder().s(post.getUsername()).build());
-        itemValues.put("sort_key", AttributeValue.builder().s(post.getSortKey()).build());
+        itemValues.put("sort_key", AttributeValue.builder().n(String.valueOf(post.getSortKey())).build());
         itemValues.put("post_id", AttributeValue.builder().s(post.getPostId()).build());
         itemValues.put("restaurant_name", AttributeValue.builder().s(post.getRestaurantName()).build());
 
@@ -71,7 +71,7 @@ public class PostRepository {
                     post.setRating(Integer.parseInt(item.get("rating").n()));
                     post.setLikes(Integer.parseInt(item.get("likes").n()));
                     post.setTags(item.get("tags").ss());
-                    post.setSortKey(item.get("sort_key").s());
+                    post.setSortKey(item.get("sort_key").n());
                     post.setRestaurantName(item.get("restaurant_name").s());
                     post.setDateCreation(item.get("created_at").s());
                     post.setUsername(item.get("username").s());
@@ -125,7 +125,7 @@ public class PostRepository {
                     post.setLikes(Integer.parseInt(item.get("likes").n()));
                     post.setTags(item.get("tags").ss());
                     post.setRestaurantId(item.get("restaurant_id").s());
-                    post.setSortKey(item.get("sort_key").s());
+                    post.setSortKey(item.get("sort_key").n());
                     post.setUsername(item.get("username").s());
                     allPosts.add(post);
                 });
@@ -181,7 +181,7 @@ public class PostRepository {
                     post.setLikes(Integer.parseInt(item.get("likes").n()));
                     post.setTags(item.get("tags").ss());
                     post.setRestaurantId(item.get("restaurant_id").s());
-                    post.setSortKey(item.get("sort_key").s());
+                    post.setSortKey(item.get("sort_key").n());
                     post.setUsername(item.get("username").s());
                     return post;
                 })
@@ -265,7 +265,7 @@ public class PostRepository {
                     post.setRating(Integer.parseInt(item.get("rating").n()));
                     post.setLikes(Integer.parseInt(item.get("likes").n()));
                     post.setTags(item.get("tags").ss());
-                    post.setSortKey(item.get("sort_key").s());
+                    post.setSortKey(item.get("sort_key").n());
                     post.setRestaurantName(item.get("restaurant_name").s());
                     post.setDateCreation(item.get("created_at").s());
                     post.setUsername(item.get("username").s());

@@ -42,7 +42,16 @@ public class PostRepository {
 
         try {
             dynamoDbClient.putItem(putItemRequest);
-            System.out.println("Post salvo com sucesso no DynamoDB");
+        } catch (Exception ex) {
+            throw new RuntimeException("Falha ao salvar post no DynamoDB: " + ex.getMessage());
+        }
+
+        PutItemRequest establishmentPutItemRequest = PutItemRequest.builder()
+                .tableName("EstablishmentPostsTable")
+                .item(itemValues)
+                .build();
+        try {
+            dynamoDbClient.putItem(establishmentPutItemRequest);
         } catch (Exception ex) {
             throw new RuntimeException("Falha ao salvar post no DynamoDB: " + ex.getMessage());
         }

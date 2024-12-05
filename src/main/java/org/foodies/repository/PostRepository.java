@@ -56,7 +56,7 @@ public class PostRepository {
                 .indexName("UsernameIndex")
                 .keyConditionExpression("username = :username")
                 .expressionAttributeValues(Map.of(":username", AttributeValue.builder().s(username).build()))
-                .scanIndexForward(false)
+                .scanIndexForward(true)
                 .build();
 
         QueryResponse queryResponse = dynamoDbClient.query(queryRequest);

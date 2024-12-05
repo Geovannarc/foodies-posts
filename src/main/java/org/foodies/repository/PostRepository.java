@@ -56,12 +56,11 @@ public class PostRepository {
                 .indexName("UsernameIndex")
                 .keyConditionExpression("username = :username")
                 .expressionAttributeValues(Map.of(":username", AttributeValue.builder().s(username).build()))
-                .scanIndexForward(true)
                 .build();
 
         QueryResponse queryResponse = dynamoDbClient.query(queryRequest);
 
-        return new ArrayList<>(queryResponse.items().stream()
+        List<Post> posts = new ArrayList<>(queryResponse.items().stream()
                 .map(item -> {
                     Post post = new Post();
                     post.setUserId(item.get("user_id").s());
@@ -79,6 +78,8 @@ public class PostRepository {
                     return post;
                 })
                 .toList());
+        posts.sort(Comparator.comparing(Post::getSortKey));
+        return posts;
     }
 
     public Map<String, Object> findFeedPosts(Long id, Map<String, AttributeValue> exclusiveStartKey) {

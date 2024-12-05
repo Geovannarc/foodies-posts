@@ -49,6 +49,7 @@ public class PostService {
         MessageDTO message = MessageDTO.builder()
                 .id(post.getRestaurantId())
                 .rating(post.getRating())
+                .userId(post.getUserId())
                 .build();
         sendMessageService.sendMessage(message.toString());
     }
